@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+<!--    <androidx.fragment.app.FragmentContainerView-->
+<!--        android:id="@+id/nav_host_fragment_content_main"-->
+<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        app:defaultNavHost="true"-->
+<!--        app:navGraph="@navigation/nav_graph" />-->
+
+    <!-- Toolbar -->
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="P2P Walkie-Talkie"
+        android:titleTextColor="@android:color/white" />
+
+    <!-- Status -->
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status: Connected (Bluetooth)"
+        android:textStyle="bold"
+        android:paddingTop="12dp" />
+
+    <!-- Device List -->
+    <ListView
+        android:id="@+id/device_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+    <!-- Listen Mode -->
+    <TextView
+        android:id="@+id/listen_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Listen Mode ON"
+        android:textColor="@android:color/holo_green_dark"
+        android:layout_marginVertical="8dp" />
+
+    <!-- Push to Talk Button -->
+    <Button
+        android:id="@+id/btn_talk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🎤 Hold to Talk"
+        android:backgroundTint="@color/design_default_color_primary"
+        android:textColor="@android:color/white"
+        android:layout_marginVertical="8dp" />
+
+    <!-- Mode Toggle + Battery -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ToggleButton
+            android:id="@+id/toggle_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOn="WiFi"
+            android:textOff="Bluetooth" />
+
+        <TextView
+            android:id="@+id/battery_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔋 Battery: 87%" />
+    </LinearLayout>
+</LinearLayout>
