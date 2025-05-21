@@ -305,6 +305,18 @@ class MainActivity : AppCompatActivity() {
         devices.clear()
         deviceListAdapter.clear()
 
+        // Add paired devices to the list
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.BLUETOOTH_CONNECT
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            bluetoothAdapter?.bondedDevices?.forEach { device ->
+                devices.add(device)
+                deviceListAdapter.add("${device.name ?: "Unknown Device"} (${device.address})")
+            }
+        }
+
         // Check if discovery is already running and cancel it
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -375,16 +387,21 @@ class MainActivity : AppCompatActivity() {
             bluetoothAdapter?.cancelDiscovery()
         }
 
-        // Cancel any existing connections
+        // Cancel any existing connections and threads
         connectedThread?.cancel()
         connectedThread = null
         connectThread?.cancel()
+        connectThread = null
+        acceptThread?.cancel()
+        acceptThread = null
 
         // Connect to the selected device
         connectThread = ConnectThread(device)
         connectThread?.start()
 
-        binding.statusText.text = "Status: Connecting to ${device.name ?: "Unknown Device"}..."
+        runOnUiThread {
+            binding.statusText.text = "Status: Connecting to ${device.name ?: "Unknown Device"}..."
+        }
     }
 
     private fun connectToWifiP2pDevice(device: WifiP2pDevice) {
@@ -419,6 +436,14 @@ class MainActivity : AppCompatActivity() {
         // Cancel any previous AcceptThread
         acceptThread?.cancel()
         acceptThread = null
+
+        // Cancel any previous ConnectThread
+        connectThread?.cancel()
+        connectThread = null
+
+        // Cancel any previous ConnectedThread
+        connectedThread?.cancel()
+        connectedThread = null
 
         // Start the accept thread to listen for incoming connections
         acceptThread = AcceptThread()
@@ -679,6 +704,7 @@ class MainActivity : AppCompatActivity() {
     private fun manageConnectedSocket(socket: BluetoothSocket) {
         // Cancel any previous connected thread
         connectedThread?.cancel()
+        connectedThread = null
 
         // Start the connected thread with the new socket
         connectedThread = ConnectedThread(socket)
@@ -690,6 +716,7 @@ class MainActivity : AppCompatActivity() {
         private val inputStream: InputStream? = socket.inputStream
         private val outputStream: OutputStream? = socket.outputStream
         private val buffer = ByteArray(BUFFER_SIZE)
+        @Volatile private var running = true
 
         override fun run() {
             // Start audio playback
@@ -698,7 +725,7 @@ class MainActivity : AppCompatActivity() {
             var numBytes: Int
 
             // Keep listening to the InputStream until an exception occurs
-            while (true) {
+            while (running) {
                 try {
                     // Read from the InputStream
                     numBytes = inputStream?.read(buffer) ?: 0
@@ -716,6 +743,8 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "Connection lost", Toast.LENGTH_SHORT).show()
                     }
 
+                    // Clean up and allow retry
+                    cancel()
                     break
                 }
             }
@@ -738,12 +767,14 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Error during transmission", Toast.LENGTH_SHORT).show()
                 }
 
-                return
+                // Clean up and allow retry
+                cancel()
             }
         }
 
         // Close the connection
         fun cancel() {
+            running = false
             try {
                 socket.close()
             } catch (e: IOException) {
@@ -825,10 +856,13 @@ class MainActivity : AppCompatActivity() {
             bluetoothAdapter?.cancelDiscovery()
         }
 
-        // Close connections
+        // Close connections and threads
         acceptThread?.cancel()
+        acceptThread = null
         connectThread?.cancel()
+        connectThread = null
         connectedThread?.cancel()
+        connectedThread = null
 
         // Release audio resources
         audioRecord?.release()
