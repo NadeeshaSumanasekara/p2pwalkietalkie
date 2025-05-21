@@ -234,12 +234,18 @@ class MainActivity : AppCompatActivity() {
                     if (read > 0) {
                         // Send the audio data through the active connection
                         connectedThread?.write(buffer)
+                        Log.d(TAG, "Audio data sent: $read bytes")
+                    } else {
+                        Log.e(TAG, "Failed to read audio data")
                     }
                 }
 
                 audioRecord?.stop()
             } catch (e: Exception) {
                 Log.e(TAG, "Error during audio recording: ${e.message}")
+                runOnUiThread {
+                    Toast.makeText(this, "Error during audio recording: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }.start()
     }
