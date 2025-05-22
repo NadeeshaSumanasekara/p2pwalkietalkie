@@ -763,7 +763,12 @@ class MainActivity : AppCompatActivity() {
         // Send data through the connection
         fun write(bytes: ByteArray) {
             try {
+                if (outputStream == null) {
+                    Log.e(TAG, "Output stream is null")
+                    return
+                }
                 outputStream?.write(bytes)
+                Log.d(TAG, "Audio data sent: ${bytes.size} bytes")
             } catch (e: IOException) {
                 Log.e(TAG, "Error occurred when sending data", e)
 
