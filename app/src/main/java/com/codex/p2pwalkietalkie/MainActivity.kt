@@ -146,10 +146,12 @@ class MainActivity : AppCompatActivity() {
         binding.toggleMode.setOnCheckedChangeListener { _, isChecked ->
             isBluetoothMode = !isChecked
             if (isChecked) {
+                binding.toggleMode.text = "WiFi      "
                 binding.statusText.text = "Status: WiFi Direct Mode"
                 setupWifiDirect()
                 discoverWifiP2pPeers()
             } else {
+                binding.toggleMode.text = "Bluetooth"
                 binding.statusText.text = "Status: Bluetooth Mode"
                 setupBluetooth()
                 discoverBluetoothDevices()

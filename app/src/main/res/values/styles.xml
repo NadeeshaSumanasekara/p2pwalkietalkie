@@ -30,4 +30,18 @@
         <item name="contentPadding">8dp</item>
         <item name="cardBackgroundColor">@color/card_background</item>
     </style>
+
+    <style name="ToolbarTitleStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Black Text Theme -->
+    <style name="BlackTextTheme">
+        <item name="android:textColor">#000000</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:textColorSecondary">#000000</item>
+        <item name="android:textColorHint">#000000</item>
+    </style>
 </resources>
